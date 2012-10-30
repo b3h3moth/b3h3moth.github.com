@@ -14,9 +14,8 @@
 /* Navigazione, si esalta il contenuto */
 #nav p.page_info
 {
-	font-style: italic;
-	font-size: 0.8em;
-	color: RGB(255,255,255);
+	font-size: 0.7em;
+	color: RGB(225, 245, 255);
 	margin: 2px;
 	padding: 2px;
 	background-color: RGB(0,0,90);
@@ -26,7 +25,7 @@
 
 #nav span {
 	font-style: normal;
-	color: RGB(150,150,150);
+	color:  RGB(200, 200, 200);
 	background-color: rgb(0,0,0);
 }
 
