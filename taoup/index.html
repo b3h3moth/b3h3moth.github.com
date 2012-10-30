@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>UnixGeek - Unix and Security enthusiast</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="../css/layout.css" rel="stylesheet" type="text/css" media="all"/>
+	<link href="../css/format.css" rel="stylesheet" type="text/css" media="all"/>
+	<link href="../css/menu.css" rel="stylesheet" type="text/css" media="all"/>
+</head>
+
+<body>
+<div id="container">
+
+<div id="header">
+<a href="../"><img src="../design/ug.png" width="318" height="61" alt="UnixG33k" 
+	title="UnixG33k; Laboratorio indipendente e sperimentazione, dal 1999" class="textual_logo" /></a>
+</div><!-- /header -->
+
+<div id="nav">
+<div class="info_about_page"><p class="page_info"><span>Page Navigation:</span> / <a href="../index.html">root</a> / The art of Unix programming</p> </div>
+<div class="info_about_page"><p class="page_info"><span>Last update: </span> 05/01/2012</p></div>
+</div>
+
+
+<ul id="menu">
+	<li><a href="../index.html">/root</a></li>
+	<li class="active">The Art of Unix programming</li>
+	<li><a href="../ukh/">Unix Kernel Hacking</a></li>
+	<li><a href="../sysad/">System Administration</a></li>
+	<li><a href="../library/">Library</a></li>
+	<li><a href="../info/">Info</a></li>
+</ul>
+
+
+<div id="workarea">
+
+
+<h1>The art of Unix programming</h1>
+
+<pre style='color:#000000;background:#ffffff;'><span style='color:#7f0055; '>#</span><span style='color:#7f0055; '>include </span><span style='color:#2a00ff; '>&lt;</span><span style='color:#3f3fbf; '>stdio.h</span><span style='color:#2a00ff; '>></span>
+<span style='color:#7f0055; '>#</span><span style='color:#7f0055; '>include </span><span style='color:#2a00ff; '>&lt;</span><span style='color:#3f3fbf; '>stdlib.h</span><span style='color:#2a00ff; '>></span>
+<span style='color:#7f0055; '>#</span><span style='color:#7f0055; '>include </span><span style='color:#2a00ff; '>&lt;</span><span style='color:#3f3fbf; '>sys/stat.h</span><span style='color:#2a00ff; '>></span>
+
+<span style='color:#3f7f59; '>/*</span>
+<span style='color:#3f7f59; '>HEADER : &lt;sys/stat.h></span>
+<span style='color:#3f7f59; '></span>
+<span style='color:#3f7f59; '>PROTOTYPE : int stat(const char *restrict path, struct stat *restrict buf);</span>
+<span style='color:#3f7f59; '></span>
+<span style='color:#3f7f59; '>SEMANTICS : Legge le informazioni relative al file 'path', collocandole nella</span>
+<span style='color:#3f7f59; '>struttura stat puntata da 'buf'.</span>
+<span style='color:#3f7f59; '></span>
+<span style='color:#3f7f59; '>RETURNS : 0 in caso di successo, -1 in caso di errore.</span>
+<span style='color:#3f7f59; '>--------------------------------------------------------------------------------</span>
+<span style='color:#3f7f59; '>stat() consente di acquisire svariate informazioni inerenti un file, ovvero</span>
+<span style='color:#3f7f59; '>tutti quei dati che sono conservati nell'inode; in realta' la peculiarita' di</span>
+<span style='color:#3f7f59; '>ottenere specifiche informazioni sui file e' proptia della famiglia di funzioni</span>
+<span style='color:#3f7f59; '>stat che comprende anche fstat() e lstat().</span>
+<span style='color:#3f7f59; '></span>
+<span style='color:#3f7f59; '>La struttura stat puo' dipendere dall'implementazione, il kernel Linux tuttavia</span>
+<span style='color:#3f7f59; '>utilizza la seguente: (si tenga ptesente che i campi contrassegnati con un</span>
+<span style='color:#3f7f59; '>asterisco non sono richiesti dallo standard POSIX.1):</span>
+<span style='color:#3f7f59; '>struct stat {</span>
+<span style='color:#3f7f59; '>mode_t st_mode; "file type &amp; mode permissions (ptotection)"</span>
+<span style='color:#3f7f59; '>ino_t st_ino; "i-node number (serial number)"</span>
+<span style='color:#3f7f59; '>dev_t st_dev; "device number (file system)"</span>
+<span style='color:#3f7f59; '>nlink_t st_nlink; "number of hard links"</span>
+<span style='color:#3f7f59; '>uid_t st_uid; "user ID of owner"</span>
+<span style='color:#3f7f59; '>gid_t st_gid; "group ID of owner"</span>
+<span style='color:#3f7f59; '>* dev_t st_rdev; "device ID (if special file)"</span>
+<span style='color:#3f7f59; '>off_t st_size; "total size, in bytes"</span>
+<span style='color:#3f7f59; '>* blksize_t st_blksize; "blocksize for file system I/O"</span>
+<span style='color:#3f7f59; '>* blkcnt_t st_blocks; "number of 512B blocks allocated"</span>
+<span style='color:#3f7f59; '>time_t st_atime; "time of last access"</span>
+<span style='color:#3f7f59; '>time_t st_mtime; "time of last modification"</span>
+<span style='color:#3f7f59; '>time_t st_ctime; "time of last status change"</span>
+<span style='color:#3f7f59; '>};</span>
+<span style='color:#3f7f59; '></span>
+<span style='color:#3f7f59; '>Il tipo di file e' decodificato mediante il campo 'st_mode', e' possibile</span>
+<span style='color:#3f7f59; '>infatti determinare il tipo di file mediante specifiche macro:</span>
+<span style='color:#3f7f59; '>- Regular file = S_ISREG;</span>
+<span style='color:#3f7f59; '>- Directory file = S_ISDIR;</span>
+<span style='color:#3f7f59; '>- Block special file = S_ISBLK;</span>
+<span style='color:#3f7f59; '>- Character special file = S_ISCHR;</span>
+<span style='color:#3f7f59; '>- FIFO = S_ISFIFO;</span>
+<span style='color:#3f7f59; '>- Socket file = S_ISSOCK;</span>
+<span style='color:#3f7f59; '>- Symbolic link file = S_ISLNK.</span>
+<span style='color:#3f7f59; '>*/</span>
+ 
+<span style='color:#7f0055; font-weight:bold; '>int</span> <span style='color:#7f0055; font-weight:bold; '>main</span>(<span style='color:#7f0055; font-weight:bold; '>int</span> argc, <span style='color:#7f0055; font-weight:bold; '>char</span> *argv[]) {
+   <span style='color:#7f0055; font-weight:bold; '>struct</span> stat buffer;
+   <span style='color:#7f0055; font-weight:bold; '>int</span> i;
+   <span style='color:#7f0055; font-weight:bold; '>char</span> *pt;
+
+   <span style='color:#7f0055; font-weight:bold; '>if</span> (argc &lt; 2) {
+      <span style='color:#7f0055; font-weight:bold; '>fprintf</span>(<span style='color:#7f0055; font-weight:bold; '>stderr</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>Uso: </span><span style='color:#2a00ff; '>%s</span><span style='color:#2a00ff; '> &lt;pathname> ... &lt;pathname N></span><span style='color:#2a00ff; '>\n</span><span style='color:#2a00ff; '>"</span>, argv[0]);
+      <span style='color:#7f0055; font-weight:bold; '>exit</span>(EXIT_FAILURE);
+   }
+
+   <span style='color:#7f0055; font-weight:bold; '>for</span> (i=0; i&lt;argc; i++) {
+      <span style='color:#7f0055; font-weight:bold; '>printf</span>(<span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>%s</span><span style='color:#2a00ff; '>: </span><span style='color:#2a00ff; '>"</span>, argv[i]);
+      <span style='color:#3f7f59; '>/*</span>
+<span style='color:#3f7f59; '>Si adopera la funzione lstat(), invece di stat, poiche' qualora ci si</span>
+<span style='color:#3f7f59; '>dovesse imbattere in un symbolic link, sara' considerato quel file e</span>
+<span style='color:#3f7f59; '>non il file a cui esso - symbolic link - si riferisce.</span>
+<span style='color:#3f7f59; '>*/</span>
+      <span style='color:#7f0055; font-weight:bold; '>if</span> (lstat(argv[i], &amp;buffer) &lt; 0) {
+       <span style='color:#7f0055; font-weight:bold; '>fprintf</span>(<span style='color:#7f0055; font-weight:bold; '>stderr</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>Err: stat</span><span style='color:#2a00ff; '>\n</span><span style='color:#2a00ff; '>"</span>);
+<span style='color:#7f0055; font-weight:bold; '>continue</span>;
+      }
+      
+      <span style='color:#7f0055; font-weight:bold; '>if</span> (S_ISREG(buffer.st_mode))
+       pt = <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>regular</span><span style='color:#2a00ff; '>"</span>;
+      <span style='color:#7f0055; font-weight:bold; '>else</span> <span style='color:#7f0055; font-weight:bold; '>if</span> (S_ISDIR(buffer.st_mode))
+       pt = <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>directory</span><span style='color:#2a00ff; '>"</span>;
+      <span style='color:#7f0055; font-weight:bold; '>else</span> <span style='color:#7f0055; font-weight:bold; '>if</span> (S_ISCHR(buffer.st_mode))
+       pt = <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>character special</span><span style='color:#2a00ff; '>"</span>;
+      <span style='color:#7f0055; font-weight:bold; '>else</span> <span style='color:#7f0055; font-weight:bold; '>if</span> (S_ISBLK(buffer.st_mode))
+       pt = <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>block special</span><span style='color:#2a00ff; '>"</span>;
+      <span style='color:#7f0055; font-weight:bold; '>else</span> <span style='color:#7f0055; font-weight:bold; '>if</span> (S_ISFIFO(buffer.st_mode))
+       pt = <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>FIFO</span><span style='color:#2a00ff; '>"</span>;
+      <span style='color:#7f0055; font-weight:bold; '>else</span> <span style='color:#7f0055; font-weight:bold; '>if</span> (S_ISLNK(buffer.st_mode))
+       pt = <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>symbolic link</span><span style='color:#2a00ff; '>"</span>;
+      <span style='color:#7f0055; font-weight:bold; '>else</span> <span style='color:#7f0055; font-weight:bold; '>if</span> (S_ISSOCK(buffer.st_mode))
+       pt = <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>socket</span><span style='color:#2a00ff; '>"</span>;
+      <span style='color:#7f0055; font-weight:bold; '>else</span>
+       pt = <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>** tipo di file sconosciuto **</span><span style='color:#2a00ff; '>"</span>;
+      <span style='color:#7f0055; font-weight:bold; '>printf</span>(<span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>%s</span><span style='color:#2a00ff; '> UID:</span><span style='color:#2a00ff; '>%d</span><span style='color:#2a00ff; '> GID:</span><span style='color:#2a00ff; '>%d</span><span style='color:#2a00ff; '>\n</span><span style='color:#2a00ff; '>"</span>, pt, buffer.st_uid, buffer.st_gid);
+   }
+
+   <span style='color:#3f7f59; '>/*</span>
+<span style='color:#3f7f59; '>Al risulato si aggiungono le informazioni relative all'UserID e GroupID del</span>
+<span style='color:#3f7f59; '>file</span>
+<span style='color:#3f7f59; '>*/</span>
+   
+   <span style='color:#7f0055; font-weight:bold; '>return</span>(EXIT_SUCCESS);
+}
+</pre>
+
+
+</div><!-- /workarea -->
+
+<div id="footer"></div>
+
+</div><!-- /contenitore -->
+
+</body>
+</html>

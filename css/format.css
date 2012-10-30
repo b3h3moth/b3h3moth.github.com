@@ -1,0 +1,98 @@
+#header .textual_logo
+{
+	margin: 10px 5px 10px 25px;
+}
+
+/* Sezione informativa con pagina attiva e ultima modifica */
+#nav .info_about_page
+{
+	margin: 0 ;
+	padding: 10px 5px 2px 5px;
+	width: 750px;
+}
+
+/* Navigazione, si esalta il contenuto */
+#nav p.page_info
+{
+	font-style: italic;
+	font-size: 0.8em;
+	color: RGB(255,255,255);
+	margin: 2px;
+	padding: 2px;
+	background-color: RGB(0,0,90);
+	border-bottom: 1px dashed RGB(120,120,120);
+	font-weight: bold;
+}
+
+#nav span {
+	font-style: normal;
+	color: RGB(150,150,150);
+	background-color: rgb(0,0,0);
+}
+
+/* link dell'header e della workarea */
+#nav a, #workarea a 
+{
+	color: rgb(255,255,255);
+	background-color: rgb(51,0,255);
+	text-decoration: none;
+}
+#nav a:hover
+{
+	background-color: inherit;
+	text-decoration: underline;
+}
+
+#workarea a:hover
+{
+	color: rgb(51,0,255);
+	background-color: inherit;
+	text-decoration: underline;
+}
+
+
+#workarea h1 
+{
+	margin: 0 5px;
+	padding-top: 10px;
+	border-bottom: 2px solid rgb(230,110,10);
+	font-size: 1.4em;
+	background-color: inherit;
+	color: rgb(30,65,135);
+	letter-spacing: 2px;
+	font-family: sans-serif;
+}
+
+#workarea p 
+{
+	margin: 0 10px;
+	padding: 10px 0;
+	font-size: 1em;
+	text-align: justify;
+}
+
+
+#workarea ul {
+	margin: 10px 5px 0 5px;
+}
+
+#workarea li span
+{
+	font-weight: bold;
+	font-size: 0.8em;
+	letter-spacing: 1px;
+}
+
+
+/* Formattazione elementi di base */
+pre
+{
+margin :0;
+padding: 10px;
+background-color: rgb(125,125,125);
+}
+
+img
+{ 
+	margin : 0;
+}
